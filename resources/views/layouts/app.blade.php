@@ -18,6 +18,7 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <!-- Branding stylesheet (overrides and tokens) -->
     <link rel="stylesheet" href="{{ asset('css/branding.css') }}">
+    @stack('styles')
 </head>
 <body class="brand-root">
     <div id="app">
@@ -76,9 +77,10 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="@yield('mainClass','py-4')">
             @yield('content')
         </main>
     </div>
+    @stack('scripts')
 </body>
 </html>
