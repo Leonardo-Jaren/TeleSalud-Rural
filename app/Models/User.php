@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -44,5 +45,27 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Determine if user has one of the given roles.
+     * Accepts multiple roles as variadic or array.
+     */
+    public function hasRole(...$roles)
+    {
+        // support passing an array
+        if (count($roles) === 1 && is_array($roles[0])) {
+            $roles = $roles[0];
+        }
+
+        $role = $this->role ?? null;
+
+        foreach ($roles as $r) {
+            if ($r === $role) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
