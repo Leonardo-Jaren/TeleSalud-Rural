@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth; 
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PacienteController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
 
 // Ruta de ejemplo para redirección según rol al login
 Route::get('/dashboard', function () {
-    $user = auth()->user();
+    $user = Auth::user();
     if (! $user) {
         return redirect()->route('login');
     }
@@ -42,6 +43,7 @@ Route::get('/dashboard', function () {
             return redirect()->route('paciente.dashboard');
     }
 })->middleware('auth')->name('dashboard');
+
 // ----- RUTAS TEMPORALES -----
 Route::view('/medico/dashboard', 'medico.dashboard');
 Route::view('/medico/horarios', 'medico.horarios');
@@ -51,3 +53,9 @@ Route::view('/medico/perfil', 'medico.perfil');
 
 Route::view('/admin/dashboard', 'admin.dashboard');
 Route::view('/admin/usuarios', 'admin.usuarios');
+
+// Rutas para Paciente
+Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard']);
+Route::get('/paciente/reservar-cita', [PacienteController::class, 'reservarCita']);
+Route::get('/paciente/historial', [PacienteController::class, 'historial']);
+Route::get('/paciente/perfil-medico', [PacienteController::class, 'perfilMedico']);
