@@ -89,4 +89,12 @@ class User extends Authenticatable
     {
         return $this->rol === 'paciente';
     }
+
+    /**
+     * Verificar si el usuario tiene alguno de los roles especificados.
+     */
+    public function hasRole(...$roles): bool
+    {
+        return in_array($this->rol, $roles);
+    }
 }
