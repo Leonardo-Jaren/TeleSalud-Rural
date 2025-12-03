@@ -26,4 +26,13 @@ class Doctor extends Model
     {
         return $this->belongsTo(User::class, 'usuario_id');
     }
+
+    // Relación: Un médico tiene muchos horarios
+    public function horarios() {
+        return $this->hasMany(Horario::class);
+    }
+    // Relación: Un médico tiene muchas especialidades
+    public function especialidades() {
+        return $this->belongsToMany(Especialidad::class, 'medico_especialidad');
+    }
 }
