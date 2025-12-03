@@ -55,7 +55,11 @@ Route::view('/admin/dashboard', 'admin.dashboard');
 Route::view('/admin/usuarios', 'admin.usuarios');
 
 // Rutas para Paciente
-Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard']);
-Route::get('/paciente/reservar-cita', [PacienteController::class, 'reservarCita']);
-Route::get('/paciente/historial', [PacienteController::class, 'historial']);
-Route::get('/paciente/perfil-medico', [PacienteController::class, 'perfilMedico']);
+Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard'])->name('paciente.dashboard');
+Route::get('/paciente/reservar-cita', [PacienteController::class, 'reservarCita'])->name('paciente.reservar-cita');
+Route::get('/paciente/historial', [PacienteController::class, 'historial'])->name('paciente.historial');
+Route::get('/paciente/perfil-medico', [PacienteController::class, 'perfilMedico'])->name('paciente.perfil-medico');
+
+// Rutas de búsqueda de médicos (Integrante 4 - Eduardo)
+Route::get('/paciente/medicos/search', [PacienteController::class, 'searchDoctors'])->name('paciente.search-doctors');
+Route::get('/paciente/medicos/by-specialty/{specialtyId}', [PacienteController::class, 'getDoctorsBySpecialty'])->name('paciente.doctors-by-specialty');
