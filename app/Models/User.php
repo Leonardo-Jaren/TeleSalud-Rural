@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'rol',
+        'telefono',
+        'documento_identidad',
     ];
 
     /**
@@ -44,5 +48,45 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Obtener el perfil de médico asociado (si existe).
+     */
+    public function medico(): HasOne
+    {
+        return $this->hasOne(Doctor::class, 'usuario_id');
+    }
+
+    /**
+     * Obtener el perfil de paciente asociado (si existe).
+     */
+    public function paciente(): HasOne
+    {
+        return $this->hasOne(Patient::class, 'usuario_id');
+    }
+
+    /**
+     * Verificar si el usuario es administrador.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    /**
+     * Verificar si el usuario es médico.
+     */
+    public function isMedico(): bool
+    {
+        return $this->rol === 'medico';
+    }
+
+    /**
+     * Verificar si el usuario es paciente.
+     */
+    public function isPaciente(): bool
+    {
+        return $this->rol === 'paciente';
     }
 }
