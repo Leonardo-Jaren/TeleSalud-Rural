@@ -44,12 +44,6 @@ Route::get('/dashboard', function () {
     }
 })->middleware('auth')->name('dashboard');
 
-// ----- RUTAS TEMPORALES -----
-Route::view('/medico/dashboard', 'medico.dashboard');
-Route::view('/medico/horarios', 'medico.horarios');
-Route::view('/medico/pacientes', 'medico.pacientes');
-Route::view('/medico/citas', 'medico.citas');
-Route::view('/medico/perfil', 'medico.perfil');
 
 Route::view('/admin/dashboard', 'admin.dashboard');
 Route::view('/admin/usuarios', 'admin.usuarios');
@@ -59,3 +53,11 @@ Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard']);
 Route::get('/paciente/reservar-cita', [PacienteController::class, 'reservarCita']);
 Route::get('/paciente/historial', [PacienteController::class, 'historial']);
 Route::get('/paciente/perfil-medico', [PacienteController::class, 'perfilMedico']);
+
+// Rutas para Medico
+use App\Http\Controllers\MedicoControlador;
+Route::get('/medico/perfil', [MedicoControlador::class, 'editarPerfil'])->name('medico.perfil');
+Route::post('/medico/perfil', [MedicoControlador::class, 'actualizarPerfil'])->name('medico.perfil.actualizar');
+Route::get('/medico/horarios', [MedicoControlador::class, 'gestionarHorarios'])->name('medico.horarios');
+Route::post('/medico/horarios', [MedicoControlador::class, 'guardarHorario'])->name('medico.horarios.guardar');
+Route::delete('/medico/horarios/{id}', [MedicoControlador::class, 'eliminarHorario'])->name('medico.horarios.eliminar');

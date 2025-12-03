@@ -29,10 +29,18 @@ class Doctor extends Model
 
     // Relación: Un médico tiene muchos horarios
     public function horarios() {
-        return $this->hasMany(Horario::class);
+        return $this->hasMany(Horario::class, 'medico_id');
     }
     // Relación: Un médico tiene muchas especialidades
-    public function especialidades() {
-        return $this->belongsToMany(Especialidad::class, 'medico_especialidad');
+    public function especialidades()
+    {
+        return $this->belongsToMany(
+            Especialidad::class,
+            'medico_especialidad',  // tabla pivote
+            'medico_id',            // FK del modelo actual (Doctor) en la tabla pivote
+            'especialidad_id',      // FK del modelo relacionado (Especialidad)
+            'id',                   // clave local en la tabla 'medicos'
+            'id'                    // clave local en la tabla 'especialidades'
+        );
     }
 }
