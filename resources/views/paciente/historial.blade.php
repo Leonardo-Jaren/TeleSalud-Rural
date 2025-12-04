@@ -6,89 +6,111 @@
 
     <div class="card">
         <div class="card-body">
-            <p class="card-text text-muted">Aquí puedes ver todas tus citas pasadas y futuras.</p>
+            <p class="card-text text-muted">
+                Aquí puedes ver tus citas pasadas y futuras. Si la cita es por telemedicina,
+                podrás unirte cuando se acerque la hora.
+            </p>
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col">Especialidad</th>
-                            <th scope="col">Médico</th>
-                            <th scope="col">Fecha y Hora</th>
-                            <th scope="col">Modalidad</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Acciones</th>
+                            <th>Especialidad</th>
+                            <th>Médico</th>
+                            <th>Fecha y Hora</th>
+                            <th>Modalidad</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        {{-- INICIO: Datos de maqueta (simulando la BD) --}}
-
-                        {{-- Ejemplo 1: Cita Completada --}}
+                        @forelse($citas as $cita)
                         <tr>
-                            <td>Cardiología</td>
-                            <td>Dr. Ricardo Morales</td>
-                            <td>20/10/2025 09:00 AM</td>
-                            <td>Presencial</td>
+                            <td>{{ $cita->especialidad->nombre ?? 'N/A' }}</td>
+
+                            <td>{{ $cita->medico->name ?? 'N/A' }}</td>
+
                             <td>
-                                <span class="badge bg-success">Completada</span>
+                                {{ \Carbon\Carbon::parse($cita->fecha)->format('d/m/Y') }}
+                                {{ \Carbon\Carbon::parse($cita->hora)->format('h:i A') }}
                             </td>
+
+                            <td>{{ $cita->type === 'telemedicina' ? 'Telemedicina' : 'Presencial' }}</td>
+
                             <td>
-                                <a href="#" class="btn btn-sm btn-outline-info">Ver Detalle</a>
+                                @if($cita->estado === 'completada')
+                                    <span class="badge bg-success">Completada</span>
+                                @elseif($cita->estado === 'cancelada')
+                                    <span class="badge bg-danger">Cancelada</span>
+                                @elseif($cita->estado === 'pendiente')
+                                    <span class="badge bg-warning text-dark">Pendiente</span>
+                                @else
+                                    <span class="badge bg-primary">{{ ucfirst($cita->estado) }}</span>
+                                @endif
+                            </td>
+
+                            <td>
+                                {{-- Botón Ver Detalle --}}
+                                <a href="{{ route('paciente.cita.detalle', $cita->id) }}"
+                                   class="btn btn-sm btn-outline-info">
+                                   Ver Detalle
+                                </a>
+
+                                {{-- Botón Cancelar (si aún no pasó) --}}
+                                @if($cita->estado !== 'cancelada' && now()->lt($cita->fecha_hora))
+                                    <a href="{{ route('paciente.cita.cancelar', $cita->id) }}"
+                                       class="btn btn-sm btn-outline-danger">
+                                       Cancelar
+                                    </a>
+                                @endif
+
+                                {{-- Botón Reprogramar --}}
+                                @if($cita->estado !== 'cancelada' && $cita->estado !== 'completada')
+                                    <a href="{{ route('paciente.cita.reprogramar', $cita->id) }}"
+                                       class="btn btn-sm btn-outline-secondary">
+                                       Reprogramar
+                                    </a>
+                                @endif
+
+                                {{-- SOLO TELEMEDICINA --}}
+                                @if($cita->type === 'telemedicina')
+                                    @php
+                                        $fechaHora = \Carbon\Carbon::parse($cita->fecha . ' ' . $cita->hora);
+                                        // Permitir entrar 10 minutos antes
+                                        $puedeEntrar = now()->greaterThanOrEqualTo($fechaHora->subMinutes(10));
+                                    @endphp
+
+                                    @if($puedeEntrar)
+                                        <a href="{{ $cita->telemedicine_link }}"
+                                           target="_blank"
+                                           class="btn btn-sm btn-primary mt-1">
+                                           Unirse a Videollamada
+                                        </a>
+                                    @else
+                                        <span class="text-muted d-block mt-1" style="font-size: 0.85em;">
+                                            Disponible 10 min antes
+                                        </span>
+                                    @endif
+                                @endif
                             </td>
                         </tr>
 
-                        {{-- Ejemplo 2: Cita Próxima (Confirmada) --}}
+                        @empty
                         <tr>
-                            <td>Medicina General</td>
-                            <td>Dra. Ana Fuentes</td>
-                            <td>25/11/2025 11:30 AM</td>
-                            <td>Remota</td>
-                            <td>
-                                <span class="badge bg-primary">Confirmada</span>
-                            </td>
-                            <td>
-                                {{-- Según el diagrama, la Cita tiene los métodos cancelar() y reprogramar() --}}
-                                <a href="#" class="btn btn-sm btn-outline-danger">Cancelar</a>
-                                <a href="#" class="btn btn-sm btn-outline-secondary">Reprogramar</a>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No tienes citas registradas.
                             </td>
                         </tr>
-
-                        {{-- Ejemplo 3: Cita Cancelada --}}
-                        <tr>
-                            <td>Dermatología</td>
-                            <td>Dr. Juan Torres</td>
-                            <td>05/11/2025 04:00 PM</td>
-                            <td>Presencial</td>
-                            <td>
-                                <span class="badge bg-danger">Cancelada</span>
-                            </td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-outline-info">Ver Detalle</a>
-                            </td>
-                        </tr>
-
-                        {{-- Ejemplo 4: Cita Pendiente --}}
-                        <tr>
-                            <td>Pediatría</td>
-                            <td>Dra. Luisa Peña</td>
-                            <td>30/11/2025 10:00 AM</td>
-                            <td>Remota</td>
-                            <td>
-                                <span class="badge bg-warning text-dark">Pendiente</span>
-                            </td>
-                            <td>
-                                <a href="#" class="btn btn-sm btn-outline-danger">Cancelar</a>
-                            </td>
-                        </tr>
-
-                        {{-- FIN: Datos de maqueta --}}
+                        @endforelse
                     </tbody>
+
                 </table>
             </div>
 
-            <div class_="text-start">
-                 <a href="{{ url('/paciente/dashboard') }}" class="btn btn-secondary mt-3">Volver al Dashboard</a>
-            </div>
+            <a href="{{ url('/paciente/dashboard') }}" class="btn btn-secondary mt-3">
+                Volver al Dashboard
+            </a>
 
         </div>
     </div>

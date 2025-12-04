@@ -15,6 +15,7 @@ return new class extends Migration
             $table->enum('rol', ['admin', 'medico', 'paciente'])->default('paciente')->after('email');
             $table->string('telefono', 20)->nullable()->after('rol');
             $table->string('documento_identidad', 20)->nullable()->unique()->after('telefono');
+            $table->boolean('bloqueado')->default(false)->after('documento_identidad');
         });
     }
 
@@ -24,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['rol', 'telefono', 'documento_identidad']);
+            $table->dropColumn(['rol', 'telefono', 'documento_identidad', 'bloqueado']);
         });
     }
 };
