@@ -15,7 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Scripts and app assets -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Branding stylesheet (overrides and tokens) -->
     <link rel="stylesheet" href="{{ asset('css/branding.css') }}">
     @stack('styles')

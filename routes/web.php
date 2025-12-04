@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth; 
+use App\Http\Controllers\AppointmentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -42,6 +43,13 @@ Route::get('/dashboard', function () {
             return redirect()->route('paciente.dashboard');
     }
 })->middleware('auth')->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/paciente/reservar', [AppointmentController::class, 'create'])->name('appointments.create')->middleware('role:paciente');
+    Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::post('/appointments/{id}/cancel', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+});
 // ----- RUTAS TEMPORALES -----
 Route::view('/medico/dashboard', 'medico.dashboard');
 Route::view('/medico/horarios', 'medico.horarios');

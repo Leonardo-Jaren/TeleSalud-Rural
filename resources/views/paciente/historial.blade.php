@@ -15,9 +15,9 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Especialidad</th>
                             <th>Médico</th>
-                            <th>Fecha y Hora</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
                             <th>Modalidad</th>
                             <th>Estado</th>
                             <th>Acciones</th>
@@ -27,70 +27,47 @@
                     <tbody>
                         @forelse($citas as $cita)
                         <tr>
-                            <td>{{ $cita->especialidad->nombre ?? 'N/A' }}</td>
+                            <td>{{ $cita->doctor->name ?? 'N/A' }}</td>
 
-                            <td>{{ $cita->medico->name ?? 'N/A' }}</td>
-
-                            <td>
-                                {{ \Carbon\Carbon::parse($cita->fecha)->format('d/m/Y') }}
-                                {{ \Carbon\Carbon::parse($cita->hora)->format('h:i A') }}
-                            </td>
+                            <td>{{ \Carbon\Carbon::parse($cita->schedule_date)->format('d/m/Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($cita->schedule_time)->format('H:i') }}</td>
 
                             <td>{{ $cita->type === 'telemedicina' ? 'Telemedicina' : 'Presencial' }}</td>
 
                             <td>
-                                @if($cita->estado === 'completada')
-                                    <span class="badge bg-success">Completada</span>
-                                @elseif($cita->estado === 'cancelada')
+                                @if($cita->status === 'confirmada')
+                                    <span class="badge bg-success">Confirmada</span>
+                                @elseif($cita->status === 'cancelada')
                                     <span class="badge bg-danger">Cancelada</span>
-                                @elseif($cita->estado === 'pendiente')
+                                @elseif($cita->status === 'pendiente')
                                     <span class="badge bg-warning text-dark">Pendiente</span>
                                 @else
-                                    <span class="badge bg-primary">{{ ucfirst($cita->estado) }}</span>
+                                    <span class="badge bg-primary">{{ ucfirst($cita->status) }}</span>
                                 @endif
                             </td>
 
                             <td>
-                                {{-- Botón Ver Detalle --}}
-                                <a href="{{ route('paciente.cita.detalle', $cita->id) }}"
-                                   class="btn btn-sm btn-outline-info">
-                                   Ver Detalle
-                                </a>
+                                {{-- Ver detalle simple --}}
+                                <a href="#" class="btn btn-sm btn-outline-info">Ver</a>
 
-                                {{-- Botón Cancelar (si aún no pasó) --}}
-                                @if($cita->estado !== 'cancelada' && now()->lt($cita->fecha_hora))
-                                    <a href="{{ route('paciente.cita.cancelar', $cita->id) }}"
-                                       class="btn btn-sm btn-outline-danger">
-                                       Cancelar
-                                    </a>
+                                {{-- Formulario para cancelar --}}
+                                @if($cita->status !== 'cancelada')
+                                    <form action="{{ route('appointments.cancel', $cita->id) }}" method="POST" style="display:inline-block">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                                    </form>
                                 @endif
 
-                                {{-- Botón Reprogramar --}}
-                                @if($cita->estado !== 'cancelada' && $cita->estado !== 'completada')
-                                    <a href="{{ route('paciente.cita.reprogramar', $cita->id) }}"
-                                       class="btn btn-sm btn-outline-secondary">
-                                       Reprogramar
-                                    </a>
-                                @endif
-
-                                {{-- SOLO TELEMEDICINA --}}
-                                @if($cita->type === 'telemedicina')
+                                @if($cita->type === 'telemedicina' && $cita->link_telemedicina)
                                     @php
-                                        $fechaHora = \Carbon\Carbon::parse($cita->fecha . ' ' . $cita->hora);
-                                        // Permitir entrar 10 minutos antes
+                                        $fechaHora = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $cita->schedule_date . ' ' . $cita->schedule_time . ':00');
                                         $puedeEntrar = now()->greaterThanOrEqualTo($fechaHora->subMinutes(10));
                                     @endphp
 
                                     @if($puedeEntrar)
-                                        <a href="{{ $cita->telemedicine_link }}"
-                                           target="_blank"
-                                           class="btn btn-sm btn-primary mt-1">
-                                           Unirse a Videollamada
-                                        </a>
+                                        <a href="{{ $cita->link_telemedicina }}" target="_blank" class="btn btn-sm btn-primary mt-1">Unirse</a>
                                     @else
-                                        <span class="text-muted d-block mt-1" style="font-size: 0.85em;">
-                                            Disponible 10 min antes
-                                        </span>
+                                        <span class="text-muted d-block mt-1" style="font-size: 0.85em;">Disponible 10 min antes</span>
                                     @endif
                                 @endif
                             </td>
@@ -98,9 +75,7 @@
 
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                No tienes citas registradas.
-                            </td>
+                            <td colspan="6" class="text-center text-muted py-4">No tienes citas registradas.</td>
                         </tr>
                         @endforelse
                     </tbody>
