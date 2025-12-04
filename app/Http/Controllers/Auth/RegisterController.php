@@ -26,10 +26,11 @@ class RegisterController extends Controller
 
     /**
      * Where to redirect users after registration.
+     * Los pacientes van directamente a su dashboard.
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/paciente/dashboard';
 
     /**
      * Create a new controller instance.

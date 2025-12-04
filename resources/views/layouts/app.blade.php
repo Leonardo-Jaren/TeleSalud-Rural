@@ -27,7 +27,7 @@
     <div id="app" class="d-flex flex-column min-vh-100">
         <nav class="navbar navbar-expand-md navbar-brand-bg">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="{{ url('/dashboard') }}">
                     <span class="logo">TS</span>
                     {{ config('app.name', 'Laravel') }}
                 </a>
@@ -40,12 +40,6 @@
                     <ul class="navbar-nav me-auto">
                         @auth
                             @php $role = Auth::user()->rol ?? 'paciente'; @endphp
-                            
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('home') }}">
-                                    <i class="bi bi-house-door me-1"></i>Inicio
-                                </a>
-                            </li>
 
                             @if($role === 'admin')
                                 <li class="nav-item">
@@ -67,7 +61,7 @@
 
                             @if($role === 'medico')
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('medico.dashboard') }}">
+                                    <a class="nav-link" href="{{ url('medico/horarios') }}">
                                         <i class="bi bi-calendar-check me-1"></i>Mis Horarios
                                     </a>
                                 </li>

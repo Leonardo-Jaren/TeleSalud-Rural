@@ -18,7 +18,7 @@ class MedicoControlador extends Controller
 
         // Verificar si el usuario tiene un perfil de médico asociado
         if (!$medico) {
-            return redirect()->route('home')->withErrors(['error' => 'No tienes un perfil de médico asociado.']);
+            return redirect()->route('dashboard')->withErrors(['error' => 'No tienes un perfil de médico asociado.']);
         }
 
         // Obtener todas las especialidades

@@ -12,7 +12,21 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Redirigir automáticamente al dashboard según el rol
+Route::get('/dashboard', function () {
+    if (Auth::check()) {
+        $role = Auth::user()->rol ?? 'paciente';
+        switch ($role) {
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+            case 'medico':
+                return redirect()->route('medico.dashboard');
+            default:
+                return redirect()->route('paciente.dashboard');
+        }
+    }
+    return redirect()->route('login');
+})->name('dashboard');
 
 // ------------- Rutas por Rol -------------
 Route::middleware(['auth'])->group(function () {
