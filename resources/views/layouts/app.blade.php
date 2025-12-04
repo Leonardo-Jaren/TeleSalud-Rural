@@ -36,9 +36,61 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <!-- Left Side Of Navbar -->
+                    <!-- Left Side Of Navbar - Navegación por Rol -->
                     <ul class="navbar-nav me-auto">
+                        @auth
+                            @php $role = Auth::user()->rol ?? 'paciente'; @endphp
+                            
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}">
+                                    <i class="bi bi-house-door me-1"></i>Inicio
+                                </a>
+                            </li>
 
+                            @if($role === 'admin')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                                        <i class="bi bi-speedometer2 me-1"></i>Administración
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('admin.usuarios') }}">
+                                        <i class="bi bi-people me-1"></i>Usuarios
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('admin.registrar-medico') }}">
+                                        <i class="bi bi-person-plus me-1"></i>Registrar Médico
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if($role === 'medico')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('medico.dashboard') }}">
+                                        <i class="bi bi-calendar-check me-1"></i>Mis Horarios
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('medico.perfil') }}">
+                                        <i class="bi bi-person-badge me-1"></i>Mi Perfil
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if($role === 'paciente')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('paciente.dashboard') }}">
+                                        <i class="bi bi-calendar-plus me-1"></i>Reservar Cita
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('paciente.historial') }}">
+                                        <i class="bi bi-clock-history me-1"></i>Historial
+                                    </a>
+                                </li>
+                            @endif
+                        @endauth
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -57,6 +109,11 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                <span class="navbar-text me-3">
+                                    <span class="badge bg-light text-dark">{{ ucfirst(Auth::user()->rol ?? 'paciente') }}</span>
+                                </span>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}

@@ -130,4 +130,22 @@ class MedicoControlador extends Controller
         return redirect()->route('medico.horarios')->with('success', 'Horario eliminado correctamente.');
     }
 
+    /**
+     * Mostrar las citas del médico
+     */
+    public function verCitas()
+    {
+        // Obtener el médico logueado
+        $medico = Auth::user()->medico;
+
+        // Obtener las citas del médico (cuando se implemente la funcionalidad completa)
+        // $citas = $medico->appointments()->orderBy('schedule_date', 'desc')->get();
+        
+        $citas = []; // Array vacío temporal hasta que se implemente la funcionalidad completa
+
+        return view('medico.citas', [
+            'citas' => $citas
+        ]);
+    }
+
 }

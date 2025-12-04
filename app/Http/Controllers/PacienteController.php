@@ -41,8 +41,10 @@ class PacienteController extends Controller
         //     ->orderBy('schedule_date', 'desc')
         //     ->get();
 
+        $citas = []; // Array vacío temporal hasta que se implemente la funcionalidad completa
+
         return view('paciente.historial', [
-            // 'citas' => $citas,
+            'citas' => $citas,
         ]);
     }
 

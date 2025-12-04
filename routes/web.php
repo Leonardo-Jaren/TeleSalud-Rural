@@ -54,9 +54,7 @@ Route::middleware(['auth'])->group(function () {
     // MÉDICO 
     Route::prefix('medico')->middleware('role:medico')->group(function () {
         Route::view('/dashboard', 'medico.dashboard')->name('medico.dashboard');
-        Route::view('/horarios', 'medico.horarios');
         Route::view('/pacientes', 'medico.pacientes');
-        Route::view('/citas', 'medico.citas');
         
         // Rutas de perfil y horarios con controlador
         Route::get('/perfil', [MedicoControlador::class, 'editarPerfil'])->name('medico.perfil');
@@ -64,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/horarios', [MedicoControlador::class, 'gestionarHorarios'])->name('medico.horarios');
         Route::post('/horarios', [MedicoControlador::class, 'guardarHorario'])->name('medico.horarios.guardar');
         Route::delete('/horarios/{id}', [MedicoControlador::class, 'eliminarHorario'])->name('medico.horarios.eliminar');
+        Route::get('/citas', [MedicoControlador::class, 'verCitas'])->name('medico.citas');
     });
 
     // PACIENTE
