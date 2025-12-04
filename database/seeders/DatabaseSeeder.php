@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Crear especialidades primero
+        $this->call(EspecialidadSeeder::class);
+
         // Crear usuario admin por defecto
         User::factory()->create([
             'name' => 'Administrador',

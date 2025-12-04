@@ -45,6 +45,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/usuarios/{id}', [AdminController::class, 'show'])->name('admin.usuarios.show');
         Route::post('/usuarios/{id}/bloquear', [AdminController::class, 'bloquear'])->name('admin.usuarios.bloquear');
         Route::delete('/usuarios/{id}', [AdminController::class, 'destroy'])->name('admin.usuarios.destroy');
+        
+        // Registro de médicos (solo admin)
+        Route::get('/registrar-medico', [AdminController::class, 'registrarMedico'])->name('admin.registrar-medico');
+        Route::post('/registrar-medico', [AdminController::class, 'storeMedico'])->name('admin.medico.store');
     });
 
     // MÉDICO 

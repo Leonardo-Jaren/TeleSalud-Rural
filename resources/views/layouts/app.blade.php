@@ -14,14 +14,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
     <!-- Scripts and app assets -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <!-- Branding stylesheet (overrides and tokens) -->
     <link rel="stylesheet" href="{{ asset('css/branding.css') }}">
     @stack('styles')
 </head>
-<body class="brand-root">
-    <div id="app">
+<body class="brand-root d-flex flex-column min-vh-100">
+    <div id="app" class="d-flex flex-column min-vh-100">
         <nav class="navbar navbar-expand-md navbar-brand-bg">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -77,9 +80,11 @@
             </div>
         </nav>
 
-        <main class="@yield('mainClass','py-4')">
+        <main class="@yield('mainClass','py-4') flex-grow-1">
             @yield('content')
         </main>
+
+        @include('layouts.footer')
     </div>
     @stack('scripts')
 </body>

@@ -8,7 +8,8 @@
 
                 @if($role === 'admin')
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Administración</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.usuarios') }}">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.registrar-medico') }}">Registrar Médico</a></li>
                 @endif
 
                 @if($role === 'medico')
