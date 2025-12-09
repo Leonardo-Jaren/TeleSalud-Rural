@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Especialidad;
 use App\Models\Doctor;
 use App\Models\Horario;
+use App\Models\Appointment;
 
 class MedicoControlador extends Controller
 {
@@ -136,16 +137,55 @@ class MedicoControlador extends Controller
     public function verCitas()
     {
         // Obtener el médico logueado
-        $medico = Auth::user()->medico;
+        $usuario = Auth::user();
+        $medicoPerfil = $usuario->medico;
 
-        // Obtener las citas del médico (cuando se implemente la funcionalidad completa)
-        // $citas = $medico->appointments()->orderBy('schedule_date', 'desc')->get();
-        
-        $citas = []; // Array vacío temporal hasta que se implemente la funcionalidad completa
+        if (!$medicoPerfil) {
+            return redirect()->route('dashboard')->withErrors(['error' => 'No tienes un perfil de médico.']);
+        }
+
+        $citas = Appointment::where('medico_id', $usuario->id)
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
 
         return view('medico.citas', [
             'citas' => $citas
         ]);
+    }
+
+    /**
+     * Aceptar una cita (médico)
+     */
+    public function aceptarCita(Request $request, $id)
+    {
+        $usuario = Auth::user();
+        $cita = Appointment::where('id', $id)->where('medico_id', $usuario->id)->first();
+        if (!$cita) {
+            return back()->withErrors(['error' => 'La cita no existe o no te pertenece.']);
+        }
+
+        $cita->status = 'aceptada';
+        // Si es telemedicina, se puede generar link automático (ya lo hace el accessor)
+        $cita->save();
+
+        return back()->with('success', 'Cita aceptada correctamente.');
+    }
+
+    /**
+     * Rechazar / cancelar una cita (médico)
+     */
+    public function rechazarCita(Request $request, $id)
+    {
+        $usuario = Auth::user();
+        $cita = Appointment::where('id', $id)->where('medico_id', $usuario->id)->first();
+        if (!$cita) {
+            return back()->withErrors(['error' => 'La cita no existe o no te pertenece.']);
+        }
+
+        $cita->status = 'cancelada';
+        $cita->save();
+
+        return back()->with('success', 'Cita cancelada correctamente.');
     }
 
 }

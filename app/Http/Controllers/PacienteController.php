@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Especialidad;
+use App\Models\Appointment;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PacienteController extends Controller
 {
@@ -26,9 +30,77 @@ class PacienteController extends Controller
     /**
      * Mostrar formulario para reservar cita
      */
-    public function reservarCita()
+    public function reservarCita(Request $request)
     {
-        return view('paciente.reservar');
+        // Cargar especialidades existentes
+        $especialidades = Especialidad::orderBy('nombre')->get();
+
+        // Cargar médicos existentes con su perfil
+        $medicos = User::where('rol', 'medico')
+            ->with(['medico.especialidades'])
+            ->get();
+
+        // Si se proporciona doctor_id en la query, verificar que exista
+        $selectedDoctorId = $request->query('doctor_id');
+        if ($selectedDoctorId) {
+            $existe = $medicos->contains('id', $selectedDoctorId);
+            if (!$existe) {
+                $selectedDoctorId = null; // no existe, limpiar selección
+            }
+        }
+
+        return view('paciente.reservar', [
+            'especialidades' => $especialidades,
+            'medicos' => $medicos,
+            'selectedDoctorId' => $selectedDoctorId,
+        ]);
+    }
+
+    /**
+     * Procesar la creación de una reserva (form POST)
+     */
+    public function crearReserva(Request $request)
+    {
+        // Validación básica
+        $data = $request->validate([
+            'especialidad' => 'nullable|integer|exists:especialidades,id',
+            'medico' => 'required|integer|exists:users,id',
+            'modalidad' => 'required|in:presencial,remota',
+            'fecha' => 'required|date|after_or_equal:today',
+            'motivo' => 'nullable|string|max:1000',
+        ]);
+
+        // Verificar que el médico exista y tenga rol 'medico'
+        $medico = User::find($data['medico']);
+        if (!$medico || ($medico->rol ?? null) !== 'medico') {
+            return back()->withErrors(['medico' => 'El médico seleccionado no existe.'])->withInput();
+        }
+
+        // Si se indicó especialidad, verificar que exista y que el médico tenga dicha especialidad
+        if (!empty($data['especialidad'])) {
+            $espId = $data['especialidad'];
+            $tiene = $medico->medico && $medico->medico->especialidades ? $medico->medico->especialidades->contains('id', $espId) : false;
+            if (!$tiene) {
+                return back()->withErrors(['especialidad' => 'La especialidad seleccionada no corresponde al médico seleccionado.'])->withInput();
+            }
+        }
+
+        // Crear appointment completo
+        $type = $data['modalidad'] === 'remota' ? 'telemedicina' : 'presencial';
+
+        // Combinar fecha (date) en scheduled_at con hora por defecto (09:00)
+        $scheduled = Carbon::parse($data['fecha'])->setTime(9,0,0);
+
+        $appointment = Appointment::create([
+            'type' => $type,
+            'paciente_id' => Auth::id(),
+            'medico_id' => $medico->id,
+            'scheduled_at' => $scheduled,
+            'motivo' => $data['motivo'] ?? null,
+            'status' => 'pendiente',
+        ]);
+
+        return redirect()->route('paciente.historial')->with('success', 'Cita creada correctamente y enviada al médico.');
     }
 
     /**
@@ -41,7 +113,10 @@ class PacienteController extends Controller
         //     ->orderBy('schedule_date', 'desc')
         //     ->get();
 
-        $citas = []; // Array vacío temporal hasta que se implemente la funcionalidad completa
+        $user = auth()->user();
+        $citas = \App\Models\Appointment::where('paciente_id', $user->id)
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
 
         return view('paciente.historial', [
             'citas' => $citas,
@@ -49,18 +124,42 @@ class PacienteController extends Controller
     }
 
     /**
+     * Cancelar una cita por parte del paciente
+     */
+    public function cancelarCita(Request $request, $id)
+    {
+        $user = auth()->user();
+        $cita = Appointment::where('id', $id)->where('paciente_id', $user->id)->first();
+        if (!$cita) {
+            return back()->withErrors(['error' => 'La cita no existe o no te pertenece.']);
+        }
+
+        if ($cita->status === 'cancelada') {
+            return back()->withErrors(['error' => 'La cita ya fue cancelada.']);
+        }
+
+        $cita->status = 'cancelada';
+        $cita->save();
+
+        return back()->with('success', 'Cita cancelada correctamente.');
+    }
+
+    /**
      * Mostrar lista de médicos disponibles
      */
     public function perfilMedico()
     {
-        // Obtener todos los médicos con su especialidad
-        // Cuando Leonardo entregue los modelos Doctor y Specialty:
-        // $medicos = User::where('role', 'medico')
-        //     ->with('doctor.specialties')
-        //     ->get();
+        // Obtener todos los usuarios con rol 'medico' y cargar su perfil de médico y especialidades
+        $medicos = User::where('rol', 'medico')
+            ->with(['medico.especialidades'])
+            ->get();
+
+        // Cargar todas las especialidades para filtros en la UI
+        $especialidades = Especialidad::orderBy('nombre')->get();
 
         return view('paciente.perfil-medico', [
-            // 'medicos' => $medicos,
+            'medicos' => $medicos,
+            'especialidades' => $especialidades,
         ]);
     }
 
@@ -72,23 +171,23 @@ class PacienteController extends Controller
     {
         $specialty = $request->query('especialidad');
 
-        if (!$specialty) {
-            return redirect()->route('paciente.perfil-medico');
+        $query = User::where('rol', 'medico')
+            ->with(['medico.especialidades']);
+
+        if ($specialty) {
+            $query->whereHas('medico.especialidades', function ($q) use ($specialty) {
+                $q->where('nombre', 'like', "%{$specialty}%");
+            });
         }
 
-        // Cuando Leonardo entregue los modelos:
-        // $medicos = User::where('role', 'medico')
-        //     ->with(['doctor.specialties' => function($query) use ($specialty) {
-        //         $query->where('name', 'ilike', "%{$specialty}%");
-        //     }])
-        //     ->whereHas('doctor.specialties', function($query) use ($specialty) {
-        //         $query->where('name', 'ilike', "%{$specialty}%");
-        //     })
-        //     ->get();
+        $medicos = $query->get();
+
+        $especialidades = Especialidad::orderBy('nombre')->get();
 
         return view('paciente.perfil-medico', [
-            // 'medicos' => $medicos,
+            'medicos' => $medicos,
             'especialidadFiltro' => $specialty,
+            'especialidades' => $especialidades,
         ]);
     }
 
@@ -98,20 +197,15 @@ class PacienteController extends Controller
      */
     public function getDoctorsBySpecialty($specialtyId)
     {
-        // Cuando Leonardo entregue los modelos:
-        // $medicos = User::where('role', 'medico')
-        //     ->with(['doctor.specialties'])
-        //     ->whereHas('doctor.specialties', function($query) use ($specialtyId) {
-        //         $query->where('id', $specialtyId);
-        //     })
-        //     ->get(['id', 'name', 'email']);
-
-        // return response()->json([
-        //     'medicos' => $medicos,
-        // ]);
+        $medicos = User::where('rol', 'medico')
+            ->with(['medico.especialidades'])
+            ->whereHas('medico.especialidades', function ($q) use ($specialtyId) {
+                $q->where('id', $specialtyId);
+            })
+            ->get(['id', 'name', 'email']);
 
         return response()->json([
-            'message' => 'Funcionalidad disponible cuando los modelos Doctor y Specialty estén listos',
+            'medicos' => $medicos,
         ]);
     }
 }

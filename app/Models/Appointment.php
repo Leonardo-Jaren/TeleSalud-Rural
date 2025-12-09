@@ -9,16 +9,34 @@ use Illuminate\Support\Facades\Schema;
 class Appointment extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'type',              // 
-        'telemedicine_link', //
+        'type',
+        'telemedicine_link',
+        'paciente_id',
+        'medico_id',
+        'scheduled_at',
+        'motivo',
+        'status',
     ];
 
-   
+    protected $casts = [
+        'scheduled_at' => 'datetime',
+    ];
+
     protected $appends = [
         'telemedicine_link_auto',
     ];
+
+    // Relaciones
+    public function paciente()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'paciente_id');
+    }
+
+    public function medico()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'medico_id');
+    }
 
     public function getTelemedicineLinkAutoAttribute()
     {

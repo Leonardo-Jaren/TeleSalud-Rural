@@ -77,12 +77,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/horarios', [MedicoControlador::class, 'guardarHorario'])->name('medico.horarios.guardar');
         Route::delete('/horarios/{id}', [MedicoControlador::class, 'eliminarHorario'])->name('medico.horarios.eliminar');
         Route::get('/citas', [MedicoControlador::class, 'verCitas'])->name('medico.citas');
+        Route::post('/citas/{id}/aceptar', [MedicoControlador::class, 'aceptarCita'])->name('medico.citas.aceptar');
+        Route::post('/citas/{id}/rechazar', [MedicoControlador::class, 'rechazarCita'])->name('medico.citas.rechazar');
     });
 
     // PACIENTE
     Route::prefix('paciente')->middleware('role:paciente')->group(function () {
         Route::get('/dashboard', [PacienteController::class, 'dashboard'])->name('paciente.dashboard');
         Route::get('/reservar-cita', [PacienteController::class, 'reservarCita'])->name('paciente.reservar-cita');
+        Route::post('/reservar-cita', [PacienteController::class, 'crearReserva'])->name('paciente.reservar-cita.store');
+        Route::post('/citas/{id}/cancelar', [PacienteController::class, 'cancelarCita'])->name('paciente.cita.cancelar');
         Route::get('/historial', [PacienteController::class, 'historial'])->name('paciente.historial');
         Route::get('/perfil-medico', [PacienteController::class, 'perfilMedico'])->name('paciente.perfil-medico');
         
