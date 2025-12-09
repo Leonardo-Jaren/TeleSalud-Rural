@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,7 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'rol',
+        'telefono',
+        'documento_identidad',
     ];
 
     /**
@@ -48,24 +51,50 @@ class User extends Authenticatable
     }
 
     /**
-     * Determine if user has one of the given roles.
-     * Accepts multiple roles as variadic or array.
+     * Obtener el perfil de médico asociado (si existe).
      */
-    public function hasRole(...$roles)
+    public function medico(): HasOne
     {
-        // support passing an array
-        if (count($roles) === 1 && is_array($roles[0])) {
-            $roles = $roles[0];
-        }
+        return $this->hasOne(Doctor::class, 'usuario_id');
+    }
 
-        $role = $this->role ?? null;
+    /**
+     * Obtener el perfil de paciente asociado (si existe).
+     */
+    public function paciente(): HasOne
+    {
+        return $this->hasOne(Patient::class, 'usuario_id');
+    }
 
-        foreach ($roles as $r) {
-            if ($r === $role) {
-                return true;
-            }
-        }
+    /**
+     * Verificar si el usuario es administrador.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
 
-        return false;
+    /**
+     * Verificar si el usuario es médico.
+     */
+    public function isMedico(): bool
+    {
+        return $this->rol === 'medico';
+    }
+
+    /**
+     * Verificar si el usuario es paciente.
+     */
+    public function isPaciente(): bool
+    {
+        return $this->rol === 'paciente';
+    }
+
+    /**
+     * Verificar si el usuario tiene alguno de los roles especificados.
+     */
+    public function hasRole(...$roles): bool
+    {
+        return in_array($this->rol, $roles);
     }
 }

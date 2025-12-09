@@ -4,11 +4,10 @@
         @if(Auth::check())
             @php $role = Auth::user()->role ?? 'paciente'; @endphp
             <ul class="nav">
-                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Inicio</a></li>
-
                 @if($role === 'admin')
                     <li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Administración</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.usuarios') }}">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('admin.registrar-medico') }}">Registrar Médico</a></li>
                 @endif
 
                 @if($role === 'medico')

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
@@ -25,10 +26,11 @@ class RegisterController extends Controller
 
     /**
      * Where to redirect users after registration.
+     * Los pacientes van directamente a su dashboard.
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/paciente/dashboard';
 
     /**
      * Create a new controller instance.
@@ -52,6 +54,8 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'telefono' => ['nullable', 'string', 'max:20'],
+            'documento_identidad' => ['nullable', 'string', 'max:20', 'unique:users'],
         ]);
     }
 
@@ -63,10 +67,21 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        // Crear usuario con rol 'paciente' por defecto
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'rol' => 'paciente', // Rol por defecto
+            'telefono' => $data['telefono'] ?? null,
+            'documento_identidad' => $data['documento_identidad'] ?? null,
         ]);
+
+        // Crear automáticamente el perfil de paciente asociado
+        Patient::create([
+            'usuario_id' => $user->id,
+        ]);
+
+        return $user;
     }
 }

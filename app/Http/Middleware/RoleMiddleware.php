@@ -31,6 +31,6 @@ class RoleMiddleware
         }
 
         // unauthorized - you can change to abort(403) if preferred
-        return redirect()->route('home')->with('error', 'Acceso denegado por rol.');
+        return redirect()->route('dashboard')->with('error', 'Acceso denegado por rol.');
     }
 }
