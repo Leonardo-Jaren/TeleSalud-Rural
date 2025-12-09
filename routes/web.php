@@ -83,11 +83,17 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('paciente')->middleware('role:paciente')->group(function () {
         Route::get('/dashboard', [PacienteController::class, 'dashboard'])->name('paciente.dashboard');
         Route::get('/reservar-cita', [PacienteController::class, 'reservarCita'])->name('paciente.reservar-cita');
+        Route::post('/reservar-cita', [PacienteController::class, 'storeReserva'])->name('paciente.reservar-cita.store');
         Route::get('/historial', [PacienteController::class, 'historial'])->name('paciente.historial');
         Route::get('/perfil-medico', [PacienteController::class, 'perfilMedico'])->name('paciente.perfil-medico');
         
         // Rutas de búsqueda de médicos
         Route::get('/medicos/search', [PacienteController::class, 'searchDoctors'])->name('paciente.search-doctors');
         Route::get('/medicos/by-specialty/{specialtyId}', [PacienteController::class, 'getDoctorsBySpecialty'])->name('paciente.doctors-by-specialty');
+        
+        // Rutas de gestión de una cita individual (detalle / cancelar / reprogramar)
+        Route::get('/cita/{id}', [PacienteController::class, 'detalle'])->name('paciente.cita.detalle');
+        Route::get('/cita/{id}/cancelar', [PacienteController::class, 'cancelar'])->name('paciente.cita.cancelar');
+        Route::get('/cita/{id}/reprogramar', [PacienteController::class, 'reprogramar'])->name('paciente.cita.reprogramar');
     });
 });

@@ -13,6 +13,13 @@ class Appointment extends Model
     protected $fillable = [
         'type',              // 
         'telemedicine_link', //
+        'paciente_id',
+        'medico_id',
+        'fecha',
+        'hora',
+        'estado',
+        'motivo',
+        'especialidad_id',
     ];
 
    
@@ -54,5 +61,40 @@ class Appointment extends Model
     public function getTelemedicineLinkAttribute($value)
     {
         return $value ?: $this->telemedicine_link_auto;
+    }
+
+    /**
+     * Relación: cita pertenece a un médico (usuario)
+     */
+    public function medico()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'medico_id');
+    }
+
+    /**
+     * Relación: cita pertenece a un paciente (usuario)
+     */
+    public function paciente()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'paciente_id');
+    }
+
+    /**
+     * Helper: combinar fecha y hora en un Carbon instance
+     */
+    public function getFechaHoraAttribute()
+    {
+        if (empty($this->fecha) || empty($this->hora)) {
+            return null;
+        }
+        return \Carbon\Carbon::parse($this->fecha . ' ' . $this->hora);
+    }
+
+    /**
+     * Relación: especialidad asociada (si aplica)
+     */
+    public function especialidad()
+    {
+        return $this->belongsTo(\App\Models\Especialidad::class, 'especialidad_id');
     }
 }

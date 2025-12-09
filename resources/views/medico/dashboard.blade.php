@@ -3,7 +3,7 @@
 @section('title', 'Médico - Dashboard')
 
 @section('content')
-<div class="container py-4">
+<div class="container py-4 medico-dashboard" style="max-width:1200px;">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-1">Dashboard Médico</h1>
@@ -20,12 +20,12 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
+                        <div class="shrink-0">
                             <div class="rounded-circle bg-primary bg-opacity-10 p-3">
                                 <i class="bi bi-calendar-check text-primary" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-3">
+                        <div class="grow
                             <h6 class="mb-1 text-muted">Citas Hoy</h6>
                             <h3 class="mb-0">0</h3>
                             <small class="text-success">
@@ -41,12 +41,12 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
+                        <div class="shrink-0">
                             <div class="rounded-circle bg-success bg-opacity-10 p-3">
                                 <i class="bi bi-people text-success" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-3">
+                        <div class="grow
                             <h6 class="mb-1 text-muted">Pacientes</h6>
                             <h3 class="mb-0">0</h3>
                             <small class="text-muted">Total atendidos</small>
@@ -60,12 +60,12 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
+                        <div class="shrink-0">
                             <div class="rounded-circle bg-warning bg-opacity-10 p-3">
                                 <i class="bi bi-clock text-warning" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-3">
+                        <div class="grow
                             <h6 class="mb-1 text-muted">Próxima Cita</h6>
                             <p class="mb-0 fw-semibold">No programada</p>
                             <small class="text-muted">—</small>
@@ -79,12 +79,12 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
+                        <div class="shrink-0">
                             <div class="rounded-circle bg-info bg-opacity-10 p-3">
                                 <i class="bi bi-star text-info" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-3">
+                        <div class="grow ms-3">
                             <h6 class="mb-1 text-muted">Calificación</h6>
                             <h3 class="mb-0">—</h3>
                             <small class="text-muted">Promedio</small>

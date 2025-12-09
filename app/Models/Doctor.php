@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\User;
+use App\Models\Appointment;
 
 class Doctor extends Model
 {
@@ -42,5 +43,15 @@ class Doctor extends Model
             'id',                   // clave local en la tabla 'medicos'
             'id'                    // clave local en la tabla 'especialidades'
         );
+    }
+
+    /**
+     * Obtener las citas asociadas al médico (a través del usuario asociado)
+     */
+    public function appointments()
+    {
+        // La tabla appointments almacena medico_id que referencia a users.id
+        // En el modelo Doctor, la clave local del usuario es 'usuario_id'
+        return $this->hasMany(Appointment::class, 'medico_id', 'usuario_id');
     }
 }

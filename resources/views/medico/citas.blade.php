@@ -3,10 +3,9 @@
 @section('title', 'Médico - Citas del día')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/branding.css') }}">
 
-<div class="py-3">
-    <h1 class="h3 mb-3">Citas del día</h1>
+<div class="container py-4" style="max-width: 1200px;">
+    <h1 class="h3 mb-4">Citas del día</h1>
 
     <div class="card">
         <div class="card-body">

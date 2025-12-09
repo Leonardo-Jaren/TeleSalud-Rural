@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Especialidad;
 use App\Models\Doctor;
 use App\Models\Horario;
+use App\Models\Appointment;
 
 class MedicoControlador extends Controller
 {
@@ -78,11 +79,20 @@ class MedicoControlador extends Controller
 
     public function guardarHorario(Request $request)
     {
-        // Validar que hora_fin sea mayor a hora_inicio
+        // Validar que hora_fin sea mayor a hora_inicio (mensajes personalizados en español)
         $request->validate([
             'dia' => 'required',
             'hora_inicio' => 'required',
             'hora_fin' => 'required|after:hora_inicio',
+        ],[
+            'dia.required' => 'Seleccione un día.',
+            'hora_inicio.required' => 'La hora de inicio es obligatoria.',
+            'hora_fin.required' => 'La hora de fin es obligatoria.',
+            'hora_fin.after' => 'La hora fin debe ser posterior a la hora de inicio.',
+        ],[
+            'dia' => 'día',
+            'hora_inicio' => 'hora inicio',
+            'hora_fin' => 'hora fin',
         ]);
 
         // Obtener el médico logueado
@@ -139,9 +149,11 @@ class MedicoControlador extends Controller
         $medico = Auth::user()->medico;
 
         // Obtener las citas del médico (cuando se implemente la funcionalidad completa)
-        // $citas = $medico->appointments()->orderBy('schedule_date', 'desc')->get();
-        
-        $citas = []; // Array vacío temporal hasta que se implemente la funcionalidad completa
+        try {
+            $citas = $medico->appointments()->orderBy('fecha', 'desc')->get();
+        } catch (\Throwable $e) {
+            $citas = [];
+        }
 
         return view('medico.citas', [
             'citas' => $citas

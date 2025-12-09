@@ -89,19 +89,31 @@ body{
 }
 
 /* Logo placeholder (if no image) */
-.navbar-brand .logo{
+.navbar-brand{ font-size:1rem; color:var(--brand-neutral-900); }
+.navbar-brand .logo{ display:none; }
+
+/* Image logo (from public/logo.png) */
+.logo-img{
+  width:56px;
+  height:56px;
+  border-radius:6px; /* pequeño radio para suavizar esquinas, no circular */
+  object-fit:contain;
+  background:transparent;
+  box-shadow:none;
+  border:0;
   display:inline-block;
-  width:36px;
-  height:36px;
-  margin-right:0.75rem;
-  border-radius:7px;
-  background:rgba(255,255,255,0.12);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  color:var(--white);
 }
+@media (max-width:575.98px){ .logo-img{ width:48px; height:48px } }
+
+/* Navbar professional styling: subtle divider, no heavy shadow */
+.navbar-professional{
+  background-color: rgba(255,255,255,0.98);
+  border-bottom: 1px solid rgba(15,23,42,0.06);
+  box-shadow: none;
+}
+.navbar-professional .navbar-brand{ color:var(--brand-neutral-900); }
+.navbar-professional .nav-link{ color:var(--brand-neutral-700); }
+.navbar-professional .nav-link:hover{ color:var(--brand-neutral-900); }
 
 /* ===== Cards ===== */
 .card{
@@ -145,6 +157,13 @@ body{
   box-shadow:0 6px 18px rgba(24,111,154,0.12);
 }
 .btn-primary:hover{background:var(--brand-primary-600); transform:translateY(-1px)}
+
+/* Authentication actions (login / register) - unified typography */
+.auth-action{
+  font-size:0.95rem;
+  font-weight:600;
+  line-height:1.2;
+}
 
 /* Secondary */
 .btn-secondary{
@@ -195,8 +214,10 @@ body{
 .form-header .subtitle{color:var(--brand-neutral-500); font-size:0.95rem}
 
 /* ===== Utility classes ===== */
-.container{max-width:1100px; margin:0 auto; padding:0 var(--space-md); width:100%}
-.row{display:flex; flex-wrap:wrap; gap:1rem}
+/* Note: Do NOT override Bootstrap's .container and .row classes
+   as it breaks the grid system. Use custom classes instead. */
+.brand-container{max-width:1200px; margin:0 auto; padding:0 var(--space-md); width:100%}
+.brand-row{display:flex; flex-wrap:wrap; gap:1rem}
 .col{flex:1 1 0}
 
 /* small helper */
@@ -226,4 +247,113 @@ a:focus{outline:3px solid rgba(24,111,154,0.18); outline-offset:3px}
 @media (max-width:640px){
   .container{padding:0 0.75rem}
   .form-panel{padding:1rem}
+}
+
+/* Reglas específicas para el dashboard de médico */
+.medico-dashboard{padding-top:0}
+.medico-dashboard .card{overflow:hidden; background-clip:padding-box}
+.medico-dashboard .card.h-100{display:flex; flex-direction:column}
+.medico-dashboard .card .card-body{flex:1 1 auto}
+/* Note: Removed .medico-dashboard .row override to preserve Bootstrap grid */
+
+/* ===== Admin: tablas compactas y badges ===== */
+.admin-table thead th{border-bottom-width:1px; padding-top:0.6rem; padding-bottom:0.6rem}
+.admin-table tbody td{padding-top:0.55rem; padding-bottom:0.55rem}
+.avatar-sm{width:32px; height:32px; border-radius:8px; font-weight:700; flex:0 0 32px}
+.bg-primary-10{background-color: rgba(24,111,154,0.08)}
+.text-primary{color:var(--brand-primary)}
+.badge-admin-bloqueado{background:rgba(214,69,69,0.12); color:var(--danger); padding:0.35rem 0.55rem; border-radius:999px; font-weight:700}
+.badge-admin-activo{background:rgba(16,185,129,0.08); color:#10b981; padding:0.35rem 0.55rem; border-radius:999px; font-weight:700}
+.admin-table .btn{padding:0.3rem 0.45rem; border-radius:8px}
+.admin-table .btn i{font-size:0.95rem}
+
+/* Pagination smaller */
+.pagination .page-link{padding:0.35rem 0.6rem}
+
+@media (max-width:640px){
+  .avatar-sm{width:32px; height:32px}
+  .admin-table thead th{font-size:0.85rem}
+}
+
+/* Wrapper to limit visible height of the users table so it doesn't appear "muy largo" */
+.admin-table-wrapper{max-height:460px; overflow:auto; border-radius:8px}
+
+/* Make the table header sticky so it stays visible while scrolling */
+.admin-table-wrapper thead th{position:sticky; top:0; z-index:3; background:var(--bg-surface);}
+
+/* Truncate long texts (email) to avoid very wide/long rows */
+.admin-table td .text-muted{display:block; max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* Reduce overall row height slightly */
+.admin-table tbody td{padding-top:0.45rem; padding-bottom:0.45rem}
+
+/* Slightly smaller pagination for compactness */
+.pagination .page-item .page-link{font-size:0.86rem}
+
+/* Hero fondo para dashboard principal */
+.hero-fondo{
+  width:100%;
+  height:260px;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  display:block;
+  transition:transform .45s cubic-bezier(.2,.9,.2,1), opacity .35s ease;
+}
+.hero-fondo-inner{ /* overlay to tone down image */
+  width:100%; height:100%; background:linear-gradient(180deg, rgba(255,255,255,0.0), rgba(247,251,251,0.65));
+}
+.hero-hidden{
+  transform:translateY(-20px);
+  opacity:0; pointer-events:none;
+}
+
+@media (max-width:768px){
+  .hero-fondo{height:180px}
+}
+
+/* Welcome hero: keep background image visually fixed for parallax-like illusion
+   Use multiple background-attachments so gradient (first layer) can scroll
+   while the image (second layer) stays fixed. On small screens disable fixed. */
+.hero-section{
+  background-attachment: scroll, fixed; /* first layer (gradient) scrolls, second (image) fixed */
+  background-repeat: no-repeat, no-repeat;
+  -webkit-background-size: cover;
+  background-size: cover;
+  background-position: center center;
+}
+
+@media (max-width: 768px){
+  /* Mobile browsers (iOS/Android) often ignore fixed backgrounds; fall back to scroll */
+  .hero-section{ background-attachment: scroll !important; }
+}
+
+/* Fixed background used on welcome page to show image under multiple sections */
+.fixed-bg{
+  position:fixed;
+  inset:0; /* top:0; right:0; bottom:0; left:0 */
+  z-index:-1;
+  background-image: url('/fondo.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+@media (max-width: 768px){
+  .fixed-bg{ background-attachment: scroll; opacity:0.8 }
+}
+
+/* Stats overlay: semi-opaque solid color + optional backdrop blur to dim the fixed background */
+.stats-overlay{
+  background-color: rgba(247,249,250,0.88); /* light surface with opacity */
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+}
+
+@media (max-width:768px){
+  .stats-overlay{ -webkit-backdrop-filter: none; backdrop-filter: none; background-color: rgba(247,249,250,0.94); }
 }
