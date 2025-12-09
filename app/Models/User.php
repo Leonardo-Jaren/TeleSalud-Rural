@@ -59,6 +59,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Obtener las citas donde el usuario es paciente
+     */
+    public function appointmentsAsPatient()
+    {
+        return $this->hasMany(\App\Models\Appointment::class, 'paciente_id');
+    }
+
+    /**
      * Obtener el perfil de paciente asociado (si existe).
      */
     public function paciente(): HasOne

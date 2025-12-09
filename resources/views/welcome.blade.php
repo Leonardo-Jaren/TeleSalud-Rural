@@ -3,9 +3,12 @@
 @section('mainClass', '')
 
 @section('content')
+    <!-- Fixed background (visible under multiple sections) -->
+    <div class="fixed-bg" aria-hidden="true"></div>
+
     <!-- Hero Section -->
     <div class="hero-section"
-        style="background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%); color: white; min-height: 100vh; display: flex; align-items: center; overflow: hidden; position: relative;">
+        style="background: linear-gradient(135deg, rgba(14,165,233,0.9) 0%, rgba(16,185,129,0.9) 100%); color: white; min-height: 100vh; display: flex; align-items: center; overflow: hidden; position: relative;">
         <div class="container" style="max-width: 1200px;">
             <div
                 style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap;">

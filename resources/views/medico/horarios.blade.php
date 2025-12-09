@@ -3,10 +3,9 @@
 @section('title', 'Médico - Horarios')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/branding.css') }}">
 
-<div class="py-3">
-  <h1 class="h3 mb-3">Gestión de Horarios</h1>
+<div class="container py-4" style="max-width: 1200px;">
+  <h1 class="h3 mb-4">Gestión de Horarios</h1>
 
   @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -109,6 +108,7 @@
       @endif
     </div>
   </div>
+
 </div>
 
 @endsection

@@ -3,11 +3,10 @@
 @section('title', 'Médico - Perfil')
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/branding.css') }}">
 
-<div class="py-3">
+<div class="container py-4" style="max-width: 1200px;">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Perfil del Médico</h1>
+    <h1 class="h3 mb-0">Perfil del Médico</h1>
   </div>
 
   @if(session('success'))
@@ -28,26 +27,28 @@
     </div>
   @endif
 
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card">
-        <div class="card-body text-center">
-          <div class="mb-3">
-            <img src="{{ asset('images/avatar-placeholder.png') }}" alt="Avatar" class="rounded-circle img-fluid" style="width:120px;height:120px;object-fit:cover;">
+  <div class="row g-4 align-items-start">
+    <div class="col-sm-4 mb-3 mb-sm-0">
+      <div class="card h-100">
+        <div class="card-body text-start">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <img src="{{ asset('images/avatar-placeholder.png') }}" alt="Avatar" class="rounded-circle img-fluid" style="width:96px;height:96px;object-fit:cover;">
+            <div>
+              <h4 class="mb-0 fw-bold">Dr. {{ Auth::user()->name }}</h4>
+              <p class="text-muted mb-0">
+                @if($medico->especialidades->count() > 0)
+                  {{ $medico->especialidades->pluck('nombre')->join(', ') }}
+                @else
+                  Sin especialidad
+                @endif
+              </p>
+            </div>
           </div>
-          <h5 class="card-title">Dr. {{ Auth::user()->name }}</h5>
-          <p class="text-muted mb-0">
-            @if($medico->especialidades->count() > 0)
-              {{ $medico->especialidades->pluck('nombre')->join(', ') }}
-            @else
-              Sin especialidad
-            @endif
-          </p>
         </div>
       </div>
     </div>
-    <div class="col-md-8">
-      <div class="card">
+    <div class="col-sm-8">
+      <div class="card h-100">
         <div class="card-body">
           <h5 class="card-title mb-3">Editar Información</h5>
           <form method="POST" action="{{ route('medico.perfil.actualizar') }}">
@@ -99,6 +100,7 @@
       </div>
     </div>
   </div>
+
 </div>
 
 @endsection

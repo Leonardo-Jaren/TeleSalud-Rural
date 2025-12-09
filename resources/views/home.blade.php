@@ -213,7 +213,7 @@
 
             <div class="col-md-6 col-lg-5" data-aos="fade-up" data-aos-delay="100">
                 <div class="d-flex align-items-start p-3 rounded" style="transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor=''">
-                    <div class="flex-shrink-0 me-3">
+                    <div class="shrink-0 me-3">
                         <div class="rounded-circle bg-success bg-opacity-10 p-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
                             <i class="bi bi-calendar-check text-success" style="font-size: 1.5rem;"></i>
                         </div>
@@ -229,7 +229,7 @@
 
             <div class="col-md-6 col-lg-5" data-aos="fade-up" data-aos-delay="200">
                 <div class="d-flex align-items-start p-3 rounded" style="transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor=''">
-                    <div class="flex-shrink-0 me-3">
+                    <div class="shrink-0 me-3">
                         <div class="rounded-circle bg-info bg-opacity-10 p-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
                             <i class="bi bi-file-medical text-info" style="font-size: 1.5rem;"></i>
                         </div>
@@ -245,7 +245,7 @@
 
             <div class="col-md-6 col-lg-5" data-aos="fade-up" data-aos-delay="300">
                 <div class="d-flex align-items-start p-3 rounded" style="transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor=''">
-                    <div class="flex-shrink-0 me-3">
+                    <div class="shrink-0 me-3">
                         <div class="rounded-circle bg-warning bg-opacity-10 p-3" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
                             <i class="bi bi-people text-warning" style="font-size: 1.5rem;"></i>
                         </div>
